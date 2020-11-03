@@ -10,11 +10,12 @@ export default{
     return delDateString
     },
     // Async makes a JavaScript function return a promise
-    fetchData: async (info) => {
+    fetchData: async (url) => {
       try {
         // Await makes a JavaScript function wait for a promise
-        const promise = await fetch(`${store.state.tokenModel.url + info.url}?page=${info.pageNum}&page_size=${info.pageSize}`)
+        const promise = await fetch(`${store.state.tokenModel.url + url}`)
         const data = await promise.json()
+        // console.log(data);
         return data
       } catch (err) {
         console.log(err)

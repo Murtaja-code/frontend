@@ -13,9 +13,12 @@
           class="col-sm-6 col-lg-4 mb-4"
         >
           <b-card align="right" class="border-0 card-scale" no-body>
-            <b-link class="text-dark dec">
+            <b-link
+              :to="howeDetail[n - 1] + '/' + card.id"
+              class="text-dark dec"
+            >
               <b-card-img
-                :src="card.image"
+                :src="card.card_image"
                 class="rounded mb-3 blur"
                 height="170"
                 no-body
@@ -68,6 +71,8 @@ export default {
   data() {
     return {
       currentPage: 1,
+      // for homeDetail url, it's just like title but english.
+      howeDetail: [],
       data: []
     }
   },
@@ -88,21 +93,22 @@ export default {
     fetchData() {
       if (this.name !== 'home') {
         shared
-          .fetchData({ url: this.name, pageNum: this.currentPage, pageSize: 3 })
+          .fetchData(this.name + `?page=${this.currentPage}&page_size=3`)
           .then((res) => {
             // console.log(res.length)
             this.data = []
+            this.howeDetail = [this.name]
+            console.log(this.name)
             this.data.push(res)
           })
       } else {
         this.data = []
+        this.howeDetail = ['news', 'universities']
         const titles = { 0: 'news', 1: 'universities' }
         for (var n in titles) {
-          shared
-            .fetchData({ url: titles[n], pageNum: 1, pageSize: 6 })
-            .then((res) => {
-              this.data.push(res)
-            })
+          shared.fetchData(titles[n] + '?page=1&page_size=6').then((res) => {
+            this.data.push(res)
+          })
         }
       }
     },

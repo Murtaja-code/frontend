@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import home from "../views/home.vue";
-import detailPage from "../views/detailPage.vue";
+import homeDetail from "../views/homeDetail.vue";
 import logIn from "../views/logIn.vue"
 import register from "../views/register.vue"
 
@@ -29,9 +29,9 @@ const routes = [
     props: {name: 'universities', title: ['جامعتي']}
   },
   {
-    path: "/n",
-    name: "n",
-    component: detailPage,
+    path: "/:name/:id",
+    name: "homeDetail",
+    component: homeDetail,
   },
   {
     path: "/login",
