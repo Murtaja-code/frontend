@@ -14,7 +14,7 @@
         >
           <b-card align="right" class="border-0 card-scale" no-body>
             <b-link
-              :to="howeDetail[n - 1] + '/' + card.id"
+              :to="'detail/' + homeDetail[n - 1] + '/' + card.id"
               class="text-dark dec"
             >
               <b-card-img
@@ -72,7 +72,7 @@ export default {
     return {
       currentPage: 1,
       // for homeDetail url, it's just like title but english.
-      howeDetail: [],
+      homeDetail: [],
       data: []
     }
   },
@@ -97,18 +97,20 @@ export default {
           .then((res) => {
             // console.log(res.length)
             this.data = []
-            this.howeDetail = [this.name]
-            console.log(this.name)
+            this.homeDetail = [this.name]
+            // console.log(this.name)
             this.data.push(res)
           })
       } else {
         this.data = []
-        this.howeDetail = ['news', 'universities']
-        const titles = { 0: 'news', 1: 'universities' }
-        for (var n in titles) {
-          shared.fetchData(titles[n] + '?page=1&page_size=6').then((res) => {
-            this.data.push(res)
-          })
+        this.homeDetail = ['news', 'universities']
+        for (var n in this.homeDetail) {
+          console.log(this.homeDetail[n])
+          shared
+            .fetchData(this.homeDetail[n] + '?page=1&page_size=6')
+            .then((res) => {
+              this.data.push(res)
+            })
         }
       }
     },

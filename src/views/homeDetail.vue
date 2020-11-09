@@ -7,29 +7,43 @@
       <b-form-row>
         <b-col align="right" align-self="stretch">
           <VueShowdown :markdown="soruce.description" flavor="github" />
+
           <h5 class="mr-2">
             كليات {{ soruce.university_name }}
-            <small
-              ><b-link @click="showCollages = !showCollages"
-                >[{{ showLink }}]</b-link
-              ></small
-            >
+            <small>
+              <b-link
+                v-b-toggle.collapse-3
+                @click="showCollages = !showCollages"
+              >
+                [{{ showLink }}]</b-link
+              >
+            </small>
           </h5>
+
           <hr class="col-md-3 col-sm-3 col-6 mr-2" align="right" />
-          <b-form-row v-if="showCollages & !(collages.length === 0)">
-            <b-col class="mt-3 mr-2">
-              <ul v-for="n in soruce.collages_num" :key="n">
-                <li>
-                  <b-link class="linkColor">{{ collages[n - 1].name }}</b-link>
-                </li>
-              </ul>
-            </b-col>
-            <!-- <b-col class="mt-3 mr-2" v-if="soruce.collages_num === 5">
-            <ul v-for="n in soruce.collages_num - 3" :key="n + 12">
-              <li>{{ collages[n + 3].name }}</li> -->
-            <!-- <li>{{ n }}</li> -->
-            <!-- </ul>
-          </b-col> -->
+
+          <b-form-row v-if="!(collages.length === 0)">
+            <b-collapse visible appear id="collapse-3">
+              <b-card class="border-0">
+                <b-col class="mr-2">
+                  <ul v-for="n in soruce.collages_num" :key="n">
+                    <li>
+                      <!-- i could use state to pass url and not this  -->
+                      <b-link
+                        :to="
+                          '/university/collage/' +
+                            soruce.university_name +
+                            '/' +
+                            collages[n - 1].name
+                        "
+                        class="linkColor"
+                        >{{ collages[n - 1].name }}</b-link
+                      >
+                    </li>
+                  </ul>
+                </b-col>
+              </b-card>
+            </b-collapse>
           </b-form-row>
         </b-col>
 
@@ -45,55 +59,37 @@
             <font-awesome-icon icon="university" />
             {{ soruce.university_name }}
           </h5>
+
           <b-img center :src="soruce.logo" alt="kk" height="150"></b-img>
-          <div class="table-responsive">
-            <table class="table table-hover table-striped mt-2">
-              <tbody class="text-right">
-                <tr>
-                  <th>التأسيس</th>
-                  <td>{{ soruce.establishment }}</td>
-                </tr>
-                <tr>
-                  <th>النوع</th>
-                  <td>{{ soruce.type }}</td>
-                </tr>
-                <tr>
-                  <th>البلد</th>
-                  <td>
-                    <b-img
-                      class="img"
-                      right
-                      src="http://localhost:8000/media/images/11/01/20/iraq-flag-xs.jpg"
-                      height="20"
-                    ></b-img>
-                    {{ soruce.country }}
-                  </td>
-                </tr>
-                <tr>
-                  <th>المحافظة</th>
-                  <td>{{ soruce.province }}</td>
-                </tr>
-                <tr>
-                  <th>الرئيس</th>
-                  <td>{{ soruce.president }}</td>
-                </tr>
-                <tr>
-                  <th>عدد الكليات</th>
-                  <td>{{ soruce.collages_num }}</td>
-                </tr>
-                <tr>
-                  <th>عدد الطلاب</th>
-                  <td>{{ soruce.students_num }}</td>
-                </tr>
-                <tr>
-                  <th>الموقع</th>
-                  <td>
-                    <a :href="soruce.website">اضغط هنا</a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+
+          <b-table-simple responsive striped hover>
+            <b-tbody class="text-right">
+              <b-tr>
+                <b-th>التأسيس</b-th>
+                <b-td>{{ soruce.establishment }}</b-td>
+              </b-tr>
+              <b-tr>
+                <b-th>البلد</b-th>
+                <b-td>
+                  <b-img
+                    class="img"
+                    right
+                    src="http://localhost:8000/media/images/11/08/20/iraq-flag-xs.jpg"
+                    height="20"
+                  ></b-img>
+                  {{ soruce.country }}
+                </b-td>
+              </b-tr>
+              <b-tr v-for="n in 4" :key="n">
+                <b-th>{{ sideTableTitle[n - 1] }}</b-th>
+                <b-td>{{ sideTableContent[n - 1] }}</b-td>
+              </b-tr>
+              <b-tr>
+                <b-th>الموقع</b-th>
+                <b-td><a :href="soruce.website">اضغط هنا</a></b-td>
+              </b-tr>
+            </b-tbody>
+          </b-table-simple>
         </b-col>
       </b-form-row>
     </div>
@@ -108,6 +104,8 @@ import shared from '../shared'
 export default {
   data() {
     return {
+      sideTableTitle: ['المحافظة', 'الرئيس', 'عدد الكليات', 'عدد الطلاب'],
+      sideTableContent: [],
       showCollages: true,
       collages: [],
       soruce: '',
@@ -129,6 +127,13 @@ export default {
         .fetchData(this.$route.params.name + '/' + this.$route.params.id)
         .then((res) => {
           this.soruce = res
+
+          this.sideTableContent = [
+            this.soruce.province,
+            this.soruce.president,
+            this.soruce.collages_num,
+            this.soruce.students_num
+          ]
           shared
             .fetchData(
               `collages?university__university_name=${this.soruce.university_name}&page_size=${this.soruce.collages_num}`
@@ -141,7 +146,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 // $grid-breakpoints: (
 //   xs: 0,
 //   sm: 480px,
