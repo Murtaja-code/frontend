@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import home from "../views/home.vue";
 import homeDetail from "../views/homeDetail.vue";
 import collage from "../views/collage.vue"
+import department from "../views/department.vue"
 import logIn from "../views/logIn.vue"
 import register from "../views/register.vue"
 
@@ -38,6 +39,11 @@ const routes = [
     path: "/university/collage/:university/:collage",
     name: "collage",
     component: collage,
+  }, 
+  {
+    path: "/department/:university/:collage/:department",
+    name: "department",
+    component: department,
   }, 
   {
     path: "/login",

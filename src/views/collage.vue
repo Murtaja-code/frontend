@@ -1,55 +1,63 @@
 <template>
   <b-container align="right" fluid v-if="soruce !== ''">
-    <h3 class="mt-2">{{ soruce.name }}</h3>
+    <h4 class="mt-2">
+      {{ soruce.name }} <small>({{ $route.params.university }})</small>
+    </h4>
     <hr />
     <!-- <b-img class="mb-3" rounded center fluid :src="soruce.image"> ddd </b-img> -->
 
     <b-form-row>
       <b-col align-self="stretch">
         <VueShowdown :markdown="soruce.description" flavor="github" />
-        <h5 class="mr-2">
+        <h6 class="mr-2">
           الحدود الدنيا لاقسام {{ soruce.name }}
           <small>
             <b-link v-b-toggle.collapse-3 @click="showCollages = !showCollages">
               [{{ showLink }}]</b-link
             >
           </small>
-        </h5>
+        </h6>
 
         <hr class="col-sm-5 col-lg-4 col-xl-3 col-8 mr-2" align="right" />
-        <b-collapse visible appear id="collapse-3">
-          <b-card class="border-0" v-if="departments.length !== 0">
-            <b-form-row>
-              <b-col class="border">
-                <b-table-simple responsive striped hover>
-                  <b-thead class="text-center">
-                    <b-tr>
-                      <b-th colspan="1">{{ soruce.name }}</b-th>
-                      <b-th variant="secondary" colspan="5"
-                        >الحدود الدنيا لسنة</b-th
-                      >
-                    </b-tr>
-                    <b-tr>
-                      <b-th>القسم</b-th>
-                      <b-th v-for="n in years" :key="n">{{ n }}</b-th>
-                    </b-tr>
-                  </b-thead>
-                  <b-tbody class="text-center">
-                    <b-tr v-for="n in soruce.departments_num" :key="n">
-                      <b-td
-                        ><b-link class="linkColor">{{
-                          departments[n - 1].department
-                        }}</b-link></b-td
-                      >
-                      <b-td v-for="i in years" :key="i">{{
-                        departments[n - 1].sum[i]
-                      }}</b-td>
-                    </b-tr>
-                  </b-tbody>
-                </b-table-simple>
-              </b-col>
-            </b-form-row>
-          </b-card>
+        <b-collapse visible appear id="collapse-3" class="border">
+          <b-table-simple
+            responsive
+            striped
+            hover
+            v-if="departments.length !== 0"
+          >
+            <b-thead class="text-center">
+              <b-tr>
+                <b-th colspan="1">{{ soruce.name }}</b-th>
+                <b-th variant="secondary" colspan="5">الحدود الدنيا لسنة</b-th>
+              </b-tr>
+              <b-tr>
+                <b-th>القسم</b-th>
+                <b-th v-for="n in years" :key="n">{{ n }}</b-th>
+              </b-tr>
+            </b-thead>
+            <b-tbody class="text-center">
+              <b-tr v-for="n in soruce.departments_num" :key="n">
+                <b-td
+                  ><b-link
+                    class="linkColor"
+                    :to="
+                      '/department/' +
+                        $route.params.university +
+                        '/' +
+                        soruce.name +
+                        '/' +
+                        departments[n - 1].name
+                    "
+                    >{{ departments[n - 1].name }}</b-link
+                  ></b-td
+                >
+                <b-td v-for="i in years" :key="i">{{
+                  departments[n - 1].sum[i]
+                }}</b-td>
+              </b-tr>
+            </b-tbody>
+          </b-table-simple>
           <p class="mr-5" v-else>
             ألحدود الدنيا لهذه الكلية غير متوفر حاليا!
           </p>
@@ -119,7 +127,7 @@ export default {
         ]
         shared
           .fetchData(
-            `collages_sum?collage__name=${url.collage}&collage__university__university_name=${url.university}&page_size=${this.soruce.departments_num}`
+            `department_sum?collage__name=${url.collage}&collage__university__university_name=${url.university}&page_size=${this.soruce.departments_num}`
           )
           .then((res) => {
             // console.log(res)
@@ -129,4 +137,9 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+// .try {
+//   position: sticky;
+//   // left: 0px;
+// }
+</style>

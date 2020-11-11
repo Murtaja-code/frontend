@@ -104,14 +104,18 @@ export default {
       } else {
         this.data = []
         this.homeDetail = ['news', 'universities']
-        for (var n in this.homeDetail) {
-          console.log(this.homeDetail[n])
-          shared
-            .fetchData(this.homeDetail[n] + '?page=1&page_size=6')
-            .then((res) => {
-              this.data.push(res)
-            })
-        }
+        // not using loop cos sometimes university get called before news
+        shared
+          .fetchData(this.homeDetail[0] + '?page=1&page_size=6')
+          .then((res) => {
+            this.data.push(res)
+
+            shared
+              .fetchData(this.homeDetail[1] + '?page=1&page_size=6')
+              .then((res) => {
+                this.data.push(res)
+              })
+          })
       }
     },
 
