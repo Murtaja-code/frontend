@@ -33,18 +33,28 @@
 
     <h6>معلومات اضافية حول القسم:</h6>
     <hr class="col-sm-4 col-md-2 col-xl-2 col-6" align="right" />
-
+    <rating
+      class="text-center"
+      :id="soruce.id"
+      :arb_name="soruce.name"
+      building="department"
+      sub_url="department_ratings?department__id="
+    />
     <!-- to add border and center the col-->
-    <b-collapse visible appear>
-      <b-row align-h="center" no-gutters>
-        <b-col class="col-md-8 border">
+    <!-- <b-collapse visible appear> -->
+    <b-row align-h="center" no-gutters>
+      <b-col class="col-md-8 ">
+        <div class="border">
           <b-table-simple responsive striped hover>
             <b-tbody>
               <b-tr>
                 <b-th>التأسيس</b-th>
                 <b-td>{{ soruce.establishment }}</b-td>
               </b-tr>
-
+              <b-tr>
+                <b-th>الجامعة</b-th>
+                <b-td>{{ $route.params.university }}</b-td>
+              </b-tr>
               <b-tr>
                 <b-th>التعيين</b-th>
                 <b-td v-if="soruce.central_designation === false"
@@ -82,9 +92,17 @@
 
               <b-tr>
                 <b-th>جامعات أخرا تحتوي هذا القسم</b-th>
-                <b-td v-for="u in soruce.other_universities" :key="u">{{
-                  u
-                }}</b-td>
+                <b-td
+                  ><span
+                    v-for="(u, index) in soruce.other_universities"
+                    :key="u"
+                    ><b-link
+                      :to="'/detail/universities/' + universityId[index]"
+                    >
+                      {{ u }}
+                    </b-link></span
+                  >
+                </b-td>
               </b-tr>
 
               <b-tr>
@@ -101,18 +119,24 @@
               </b-tr>
             </b-tbody>
           </b-table-simple>
-        </b-col>
-      </b-row>
-    </b-collapse>
+        </div>
+        <h6 class="mt-4">تقييم و مراجعات {{ soruce.name }}</h6>
+      </b-col>
+    </b-row>
+
+    <!-- </b-collapse> -->
   </b-container>
 </template>
 
 <script>
+import rating from '../components/rating.vue'
 import shared from '../shared'
 
 export default {
+  components: { rating },
   data() {
     return {
+      universityId: [],
       booleanFieldTitle: ['دراسة عليا', 'دراسة مسائية', 'دراسة اهلية'],
       booleanFieldContent: ['higher_educ', 'evening_study', 'private_study'],
       title: [
@@ -141,17 +165,6 @@ export default {
       soruce: ''
     }
   },
-  // computed: {
-  //   showLink: function() {
-  //     if (this.showCollages === true) {
-  //       const n = ['لأخفاء', 'arrow-up-circle-fill']
-  //       return n
-  //     } else {
-  //       const n = ['لأظهار', 'arrow-down-circle-fill']
-  //       return n
-  //     }
-  //   }
-  // },
   mounted() {
     const n = this.$route.params
     shared
@@ -161,6 +174,16 @@ export default {
       )
       .then((res) => {
         this.soruce = res.results[0]
+
+        for (let u in this.soruce.other_universities) {
+          shared
+            .fetchData(
+              `universityid?university_name=${this.soruce.other_universities[u]}`
+            )
+            .then((res) => {
+              this.universityId.push(res.results[0].id)
+            })
+        }
       })
   }
 }

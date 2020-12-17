@@ -28,6 +28,7 @@
           >
             <b-thead class="text-center">
               <b-tr>
+                <!-- need to wider on small phones -->
                 <b-th colspan="1">{{ soruce.name }}</b-th>
                 <b-th variant="secondary" colspan="5">الحدود الدنيا لسنة</b-th>
               </b-tr>
@@ -69,12 +70,26 @@
           <font-awesome-icon icon="university" />
           {{ soruce.name }}
         </h5>
-
+        <Rating
+          class="text-center"
+          :id="soruce.id"
+          :arb_name="soruce.name"
+          building="collage"
+          sub_url="collage_ratings?collage__id="
+        />
         <b-table-simple responsive striped hover>
           <b-tbody class="text-right">
-            <b-tr v-for="n in 4" :key="n">
+            <b-tr v-for="n in 3" :key="n">
               <b-th>{{ sideTableTitle[n - 1] }}</b-th>
               <b-td>{{ sideTableContent[n - 1] }}</b-td>
+            </b-tr>
+            <b-tr>
+              <b-th>الجامعة</b-th>
+              <b-td
+                ><b-link :to="'/detail/universities/' + soruce.university">{{
+                  $route.params.university
+                }}</b-link></b-td
+              >
             </b-tr>
             <b-tr>
               <b-th>الموقع</b-th>
@@ -84,16 +99,21 @@
         </b-table-simple>
       </b-col>
     </b-form-row>
+    <h6 class="mt-2">تقييم و مراجعات {{ soruce.name }}</h6>
   </b-container>
 </template>
 
 <script>
 import shared from '../shared'
+import Rating from '../components/rating'
 
 export default {
+  components: {
+    Rating
+  },
   data() {
     return {
-      sideTableTitle: ['التأسيس', 'الجامعة', 'عدد الطلاب', 'عدد الاقسام'],
+      sideTableTitle: ['التأسيس', 'عدد الطلاب', 'عدد الاقسام'],
       sideTableContent: [],
       showCollages: true,
       soruce: '',
@@ -121,7 +141,7 @@ export default {
 
         this.sideTableContent = [
           this.soruce.establishment,
-          this.$route.params.university,
+          // this.$route.params.university,
           this.soruce.students_num,
           this.soruce.departments_num
         ]

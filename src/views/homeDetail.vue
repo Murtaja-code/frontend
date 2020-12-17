@@ -1,11 +1,14 @@
 <template>
   <b-container fluid v-if="soruce">
-    <div v-if="name === 'universities'">
-      <h4 align="right" class="mt-2">{{ soruce.university_name }}</h4>
+    <div v-if="name === 'universities'" align="right">
+      <h4 class="mt-2">
+        {{ soruce.university_name }}
+      </h4>
+
       <hr />
 
       <b-form-row>
-        <b-col align="right" align-self="stretch">
+        <b-col align-self="stretch">
           <VueShowdown :markdown="soruce.description" flavor="github" />
 
           <h5 class="mr-2">
@@ -20,7 +23,7 @@
             </small>
           </h5>
 
-          <hr class="col-md-3 col-sm-3 col-6 mr-2" align="right" />
+          <hr class="col-md-3 col-sm-3 col-6 mr-2" />
 
           <b-form-row v-if="!(collages.length === 0)">
             <b-collapse visible appear id="collapse-3">
@@ -59,8 +62,20 @@
             <font-awesome-icon icon="university" />
             {{ soruce.university_name }}
           </h5>
-
           <b-img center :src="soruce.logo" alt="kk" height="150"></b-img>
+          <!-- <div class="mr-2 text-center">
+            <small
+              >لتقييم <strong>{{ soruce.university_name }}</strong> اضغط على
+              النجوم!
+            </small>
+          </div> -->
+          <Rating
+            class="text-center"
+            :id="soruce.id"
+            :arb_name="soruce.university_name"
+            building="university"
+            sub_url="university_ratings?university__id="
+          />
 
           <b-table-simple responsive striped hover>
             <b-tbody class="text-right">
@@ -69,7 +84,7 @@
                 <b-td>{{ soruce.establishment }}</b-td>
               </b-tr>
               <b-tr>
-                <b-th>البلد</b-th>
+                <b-th>البلد </b-th>
                 <b-td>
                   <b-img
                     class="img"
@@ -84,6 +99,7 @@
                 <b-th>{{ sideTableTitle[n - 1] }}</b-th>
                 <b-td>{{ sideTableContent[n - 1] }}</b-td>
               </b-tr>
+
               <b-tr>
                 <b-th>الموقع</b-th>
                 <b-td><a :href="soruce.website">اضغط هنا</a></b-td>
@@ -92,8 +108,11 @@
           </b-table-simple>
         </b-col>
       </b-form-row>
+      <h6 class="mt-2">تقييم و مراجعات {{ soruce.university_name }}</h6>
+      <hr class="col-md-3 col-sm-3 col-6" align="right" />
     </div>
-    <b-container v-if="name === 'news'" align="right">
+
+    <b-container class="col-md-8" v-if="name === 'news'" align="right">
       <VueShowdown :markdown="soruce.description" flavor="github" />
     </b-container>
   </b-container>
@@ -101,7 +120,14 @@
 
 <script>
 import shared from '../shared'
+import Rating from '../components/rating'
+import Review from '../components/review'
+
 export default {
+  components: {
+    Rating,
+    Review
+  },
   data() {
     return {
       sideTableTitle: ['المحافظة', 'الرئيس', 'عدد الكليات', 'عدد الطلاب'],
