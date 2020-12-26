@@ -57,6 +57,7 @@ export default {
       commit('updateStorage', { access: false, refresh: false, username: null, fail: false})
     },
     // gets called whenever the site reloads.
+    // so I request access via refresh
     fetchTokens: ({ commit }) => {
       // console.log(localStorage.getItem('access'));
       if (localStorage.getItem('access') === 'false'){

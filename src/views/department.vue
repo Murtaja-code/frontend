@@ -38,7 +38,7 @@
       :id="soruce.id"
       :arb_name="soruce.name"
       building="department"
-      sub_url="department_ratings?department__id="
+      sub_url="department_ratings?building__id="
     />
     <!-- to add border and center the col-->
     <!-- <b-collapse visible appear> -->
@@ -120,7 +120,14 @@
             </b-tbody>
           </b-table-simple>
         </div>
-        <h6 class="mt-4">تقييم و مراجعات {{ soruce.name }}</h6>
+        <h6 class="mt-4">مراجعات {{ soruce.name }}</h6>
+        <hr class="col-md-3 col-sm-3 col-6" align="right" />
+        <Review
+          class="mt-2"
+          :university_id="soruce.id"
+          :arb_name="soruce.university_name"
+          sub_url="department_reviews"
+        />
       </b-col>
     </b-row>
 
@@ -130,10 +137,11 @@
 
 <script>
 import rating from '../components/rating.vue'
+import Review from '../components/review.vue'
 import shared from '../shared'
 
 export default {
-  components: { rating },
+  components: { rating, Review },
   data() {
     return {
       universityId: [],

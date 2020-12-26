@@ -112,55 +112,21 @@ export default {
     },
 
     giveRating() {
-      shared.fetchData(`users?username=${this.username}`).then((res) => {
-        if (this.building === 'university') {
-          this.body_content = JSON.stringify({
-            rating: this.rate,
-            user: res.results[0].id,
-            university: this.id
-          })
-        } else if (this.building === 'collage') {
-          this.body_content = JSON.stringify({
-            rating: this.rate,
-            user: res.results[0].id,
-            collage: this.id
-          })
-        } else if (this.building === 'department') {
-          this.body_content = JSON.stringify({
-            rating: this.rate,
-            user: res.results[0].id,
-            department: this.id
-          })
-        }
-        fetch(`${this.url}api/token/refresh/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            refresh: this.refresh
-          })
+      shared
+        .sendReviewRating({
+          rating: this.rate,
+          building: this.id,
+          sub_url: this.sub_url,
+          id: this.id,
+          method: 'POST'
         })
-          .then((res) => res.json())
-          .then((data) => {
-            fetch(`${this.url + this.sub_url + this.id}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + data.access
-              },
-              body: this.body_content
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                this.ave_rating = data.ave_rating
-                this.rate = 0
-              })
-              .catch((err) => {
-                console.log(err)
-              })
-          })
-      })
+        .then((data) => {
+          this.ave_rating = data.ave_rating
+          this.rate = 0
+        })
+        .catch((err) => {
+          console.log(err)
+        })
       this.fetchAveRating()
     }
   },

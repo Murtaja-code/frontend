@@ -63,18 +63,12 @@
             {{ soruce.university_name }}
           </h5>
           <b-img center :src="soruce.logo" alt="kk" height="150"></b-img>
-          <!-- <div class="mr-2 text-center">
-            <small
-              >لتقييم <strong>{{ soruce.university_name }}</strong> اضغط على
-              النجوم!
-            </small>
-          </div> -->
           <Rating
             class="text-center"
             :id="soruce.id"
             :arb_name="soruce.university_name"
             building="university"
-            sub_url="university_ratings?university__id="
+            sub_url="university_ratings?building__id="
           />
 
           <b-table-simple responsive striped hover>
@@ -108,8 +102,14 @@
           </b-table-simple>
         </b-col>
       </b-form-row>
-      <h6 class="mt-2">تقييم و مراجعات {{ soruce.university_name }}</h6>
+      <h6 class="mt-2">مراجعات {{ soruce.university_name }}</h6>
       <hr class="col-md-3 col-sm-3 col-6" align="right" />
+      <Review
+        class="col-md-6 mt-2"
+        :university_id="soruce.id"
+        :arb_name="soruce.university_name"
+        sub_url="university_reviews"
+      />
     </div>
 
     <b-container class="col-md-8" v-if="name === 'news'" align="right">
@@ -121,7 +121,7 @@
 <script>
 import shared from '../shared'
 import Rating from '../components/rating'
-import Review from '../components/review'
+import Review from '../components/review.vue'
 
 export default {
   components: {

@@ -75,7 +75,7 @@
           :id="soruce.id"
           :arb_name="soruce.name"
           building="collage"
-          sub_url="collage_ratings?collage__id="
+          sub_url="collage_ratings?building__id="
         />
         <b-table-simple responsive striped hover>
           <b-tbody class="text-right">
@@ -99,17 +99,26 @@
         </b-table-simple>
       </b-col>
     </b-form-row>
-    <h6 class="mt-2">تقييم و مراجعات {{ soruce.name }}</h6>
+    <h6 class="mt-2">مراجعات {{ soruce.name }}</h6>
+    <hr class="col-md-3 col-sm-3 col-6" align="right" />
+    <Review
+      class="col-md-6 mt-2"
+      :university_id="soruce.id"
+      :arb_name="soruce.name"
+      sub_url="department_reviews"
+    />
   </b-container>
 </template>
 
 <script>
 import shared from '../shared'
 import Rating from '../components/rating'
+import Review from '../components/review.vue'
 
 export default {
   components: {
-    Rating
+    Rating,
+    Review
   },
   data() {
     return {
