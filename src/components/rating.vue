@@ -95,7 +95,6 @@ export default {
   },
   props: {
     id: Number,
-    building: String,
     sub_url: String,
     arb_name: String
   },
@@ -107,7 +106,12 @@ export default {
   methods: {
     fetchAveRating() {
       shared.fetchData(`${this.sub_url + this.id}&page_size=1`).then((res) => {
-        this.ave_rating = res.results[0].ave_rating
+        // in case no results comes back.
+        if (res.results.length) {
+          this.ave_rating = res.results[0].ave_rating
+        } else {
+          this.ave_rating = 0
+        }
       })
     },
 

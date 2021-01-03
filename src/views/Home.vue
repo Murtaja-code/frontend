@@ -26,12 +26,12 @@
                 :alt="card.image"
               />
               <!-- if the name === news -->
-              <b-card-text class="dec" v-if="!card.university_name">
+              <b-card-text class="dec" v-if="!card.name">
                 <h5 class="card-title">{{ card.card_text }}</h5>
               </b-card-text>
               <!-- else -->
               <b-card-text class="dec" v-else>
-                <h5 class="card-title">{{ card.university_name }}</h5>
+                <h5 class="card-title">{{ card.name }}</h5>
                 {{ card.card_text }}
               </b-card-text>
             </b-link>
@@ -51,7 +51,7 @@
       v-if="name !== 'home'"
       v-model="currentPage"
       :total-rows="data[0].count"
-      per-page="3"
+      per-page="6"
       prev-text="السابق"
       next-text="التالي"
       limit="4"
@@ -93,7 +93,7 @@ export default {
     fetchData() {
       if (this.name !== 'home') {
         shared
-          .fetchData(this.name + `?page=${this.currentPage}&page_size=3`)
+          .fetchData(this.name + `?page=${this.currentPage}&page_size=6`)
           .then((res) => {
             // console.log(res.length)
             this.data = []

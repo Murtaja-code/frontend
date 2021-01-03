@@ -2,16 +2,10 @@
   <div class="text-right mb-5 mt-0">
     <!-- let one edit text appear! -->
     <!-- username is used to control dots appearance -->
-    <div
-      class="border mt-2"
-      v-for="(item, index) in soruce.results"
-      :key="item.id"
-    >
+    <div class="border mt-2" v-for="(item, index) in soruce" :key="item.id">
       <b-icon
-        v-if="(username === item.username) & !edit[index][edits[index]]"
-        @click="
-          dot_info[index][dots_info[index]] = !dot_info[index][dots_info[index]]
-        "
+        v-if="(username === item.username) & !edit[edits[index]]"
+        @click="dot_info[dots_info[index]] = !dot_info[dots_info[index]]"
         icon="three-dots-vertical"
         class="dots-posit"
       ></b-icon>
@@ -19,13 +13,13 @@
       <b-button-group
         vertical
         @click="edit_text = item.review"
-        v-if="dot_info[index][dots_info[index]] & !edit[index][edits[index]]"
+        v-if="dot_info[dots_info[index]] & !edit[edits[index]]"
         class="dots-posit"
       >
         <b-button
           size="sm"
           variant="info"
-          @click="edit[index][edits[index]] = !edit[index][edits[index]]"
+          @click="edit[edits[index]] = !edit[edits[index]]"
           >تعديل</b-button
         >
         <b-button
@@ -42,17 +36,18 @@
       </h6>
       <hr class="col-2 mr-2 mt-0 mb-0" />
 
-      <p class="mr-2 mt-0" v-if="!edit[index][edits[index]]">
+      <p class="mr-2 mt-0" v-if="!edit[edits[index]]">
         {{ item.review }}
       </p>
 
-      <b-form v-if="edit[index][edits[index]]" @submit.prevent="formSumbit">
+      <b-form v-if="edit[edits[index]]" @submit.prevent="formSumbit">
         <b-form-textarea
           class="mt-1"
           id="textarea"
           v-model="edit_text"
           rows="2"
         ></b-form-textarea>
+        <!-- remembering the comment id -->
         <b-button
           variant="primary"
           :disabled="edit_text === ''"
@@ -65,10 +60,8 @@
         <b-button
           variant="danger"
           @click="
-            ;(edit[index][edits[index]] = !edit[index][edits[index]]),
-              (dot_info[index][dots_info[index]] = !dot_info[index][
-                dots_info[index]
-              ])
+            ;(edit[edits[index]] = !edit[edits[index]]),
+              (dot_info[dots_info[index]] = !dot_info[dots_info[index]])
           "
           class="btn-posit"
           size="sm"
@@ -77,13 +70,13 @@
       </b-form>
     </div>
     <b-pagination
+      v-if="ShowPagi"
       class="mt-2"
       v-model="currentPage"
-      :total-rows="soruce.count"
+      :total-rows="totalReviews"
       per-page="5"
       prev-text="السابق"
       next-text="التالي"
-      limit="5"
       align="center"
       size="sm"
       pills
@@ -92,6 +85,11 @@
       first-number
       last-number
     ></b-pagination>
+    <div v-if="ShowNoCOM" align="center" class="text-danger">
+      لا {{ empty1 }} حتى الان! <br /><span class="no-com"
+        >(كون اول {{ empty2 }})</span
+      >
+    </div>
 
     <b-form @submit.prevent="formSumbit">
       <label for="textarea"
@@ -141,6 +139,8 @@ export default {
       text: '',
       edit_text: '',
       alert: false,
+      ShowNoCOM: '',
+      ShowPagi: '',
       dots_info: [
         'dot_info1',
         'dot_info2',
@@ -148,30 +148,32 @@ export default {
         'dot_info4',
         'dot_info5'
       ],
-      dot_info: [
-        { dot_info1: false },
-        { dot_info2: false },
-        { dot_info3: false },
-        { dot_info4: false },
-        { dot_info5: false }
-      ],
       edits: ['edit1', 'edit2', 'edit3', 'edit4', 'edit5'],
-      edit: [
-        { edit1: false },
-        { edit2: false },
-        { edit3: false },
-        { edit4: false },
-        { edit5: false }
-      ],
+      dot_info: {
+        dot_info1: false,
+        dot_info2: false,
+        dot_info3: false,
+        dot_info4: false,
+        dot_info5: false
+      },
+      edit: {
+        edit1: false,
+        edit2: false,
+        edit3: false,
+        edit4: false,
+        edit5: false
+      },
       method: 'POST',
       comment_id: '',
-      soruce: ''
+      soruce: '',
+      totalReviews: ''
     }
   },
   props: {
-    university_id: Number,
+    building: Number,
     sub_url: String,
-    arb_name: String
+    empty1: String,
+    empty2: String
   },
   computed: mapState({
     refresh: (state) => state.tokenModel.refresh,
@@ -179,10 +181,26 @@ export default {
   }),
   methods: {
     fetchReview() {
+      // to avoid mutating the prop directly.
+      var temp_url = this.sub_url
+      // news need an id in the url, cos the url for all news cards is similar.
+      // putting the id just here to delete and change it correctly.
+      if (this.sub_url === 'news_reviews') {
+        temp_url = temp_url.concat(`?building__id=${this.building}&`)
+      }
       shared
-        .fetchData(this.sub_url.concat(`?page=${this.currentPage}&page_size=5`))
+        .fetchData(
+          temp_url.concat(
+            `?building__id=${this.building}&page=${this.currentPage}&page_size=5`
+          )
+        )
         .then((res) => {
-          this.soruce = res
+          this.soruce = res.results
+          this.totalReviews = res.count
+          // at first both of them is false.
+          // if there is a comment the shownocom will be false.
+          this.ShowNoCOM = !res.count
+          this.ShowPagi = res.count
         })
     },
     deleteRview() {
@@ -194,15 +212,15 @@ export default {
         })
         .then(() => {
           // if one comment in a page and the comment get deleted.
-          //  the entire page will deleted, so it will throw an error('404' not found).
+          // the entire page will deleted, so it will throw an error('404' not found).
           // but still a problem here!
           this.currentPage = 1
           this.fetchReview()
         })
       // cos the one after the deleted item will appear
       for (let i = 0; i < 5; i++) {
-        this.edit[i][this.edits[i]] = false
-        this.dot_info[i][this.dots_info[i]] = false
+        this.edit[this.edits[i]] = false
+        this.dot_info[this.dots_info[i]] = false
       }
     },
     formSumbit() {
@@ -210,7 +228,7 @@ export default {
         shared
           .sendReviewRating({
             review: this.edit_text,
-            building: this.university_id,
+            building: this.building,
             sub_url: this.sub_url,
             id: this.comment_id,
             method: this.method
@@ -225,7 +243,7 @@ export default {
           .sendReviewRating({
             review: this.text,
             // user: res.results[0].id,
-            building: this.university_id,
+            building: this.building,
             sub_url: this.sub_url,
             id: '',
             method: this.method
@@ -235,8 +253,8 @@ export default {
           })
       }
       for (let i = 0; i < 5; i++) {
-        this.edit[i][this.edits[i]] = false
-        this.dot_info[i][this.dots_info[i]] = false
+        this.edit[this.edits[i]] = false
+        this.dot_info[this.dots_info[i]] = false
       }
       this.text = ''
     }
@@ -244,6 +262,7 @@ export default {
 
   mounted() {
     this.fetchReview()
+    // this.ShowCount = this.soruce
   }
 }
 </script>
@@ -254,5 +273,8 @@ export default {
 }
 .dots-posit {
   float: left;
+}
+.no-com {
+  font-size: 10px;
 }
 </style>

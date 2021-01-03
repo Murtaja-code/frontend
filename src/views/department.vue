@@ -37,10 +37,9 @@
       class="text-center"
       :id="soruce.id"
       :arb_name="soruce.name"
-      building="department"
       sub_url="department_ratings?building__id="
     />
-    <!-- to add border and center the col-->
+    <!-- to add border and center the col -->
     <!-- <b-collapse visible appear> -->
     <b-row align-h="center" no-gutters>
       <b-col class="col-md-8 ">
@@ -124,9 +123,10 @@
         <hr class="col-md-3 col-sm-3 col-6" align="right" />
         <Review
           class="mt-2"
-          :university_id="soruce.id"
-          :arb_name="soruce.university_name"
+          :building="soruce.id"
           sub_url="department_reviews"
+          empty1="مراجعات"
+          empty2="المراجعين"
         />
       </b-col>
     </b-row>

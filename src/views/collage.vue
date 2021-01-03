@@ -74,7 +74,6 @@
           class="text-center"
           :id="soruce.id"
           :arb_name="soruce.name"
-          building="collage"
           sub_url="collage_ratings?building__id="
         />
         <b-table-simple responsive striped hover>
@@ -103,9 +102,10 @@
     <hr class="col-md-3 col-sm-3 col-6" align="right" />
     <Review
       class="col-md-6 mt-2"
-      :university_id="soruce.id"
-      :arb_name="soruce.name"
-      sub_url="department_reviews"
+      :building="soruce.id"
+      sub_url="collage_reviews"
+      empty1="مراجعات"
+      empty2="المراجعين"
     />
   </b-container>
 </template>
@@ -143,7 +143,7 @@ export default {
     const url = this.$route.params
     shared
       .fetchData(
-        `collagesdetail?university__university_name=${url.university}&name=${url.collage}`
+        `collagesdetail?university__name=${url.university}&name=${url.collage}`
       )
       .then((res) => {
         this.soruce = res.results[0]
@@ -156,7 +156,7 @@ export default {
         ]
         shared
           .fetchData(
-            `department_sum?collage__name=${url.collage}&collage__university__university_name=${url.university}&page_size=${this.soruce.departments_num}`
+            `department_sum?collage__name=${url.collage}&collage__university__name=${url.university}&page_size=${this.soruce.departments_num}`
           )
           .then((res) => {
             // console.log(res)

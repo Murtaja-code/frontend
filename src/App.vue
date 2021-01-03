@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <NavBar />
-    <router-view />
+    <!-- using the key here to make every route with different params a different route so it helps the search engine. -->
+    <router-view :key="$route.path" />
   </div>
 </template>
 

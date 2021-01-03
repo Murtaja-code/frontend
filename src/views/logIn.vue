@@ -1,6 +1,6 @@
 <template>
-  <b-container class="border mt-2 rounded col-md-6 bgcolor">
-    <b-form @submit.prevent="login" class="text">
+  <b-container class="border mt-2 rounded col-md-6 bg-color">
+    <b-form @submit.prevent="login" class="text-right">
       <span v-if="fail">
         <b-alert show variant="danger" class="mt-1">
           <b-icon icon="exclamation-circle-fill" variant="danger"></b-icon>
@@ -21,9 +21,9 @@
             id="input-1"
             v-model="form.name"
             type="text"
-            title="املأ ألحقل رجاءاً"
-            oninvalid="setCustomValidity('املأ ألحقل رجاءاً')"
-            oninput="setCustomValidity('')"
+            :title="title"
+            :oninvalid="oninvalid"
+            :oninput="oninput"
             required
             placeholder="ادخل الاسم"
           ></b-form-input>
@@ -39,9 +39,9 @@
             id="input-2"
             v-model="form.password"
             type="password"
-            title="املأ ألحقل رجاءاً"
-            oninvalid="setCustomValidity('املأ ألحقل رجاءاً')"
-            oninput="setCustomValidity('')"
+            :title="title"
+            :oninvalid="oninvalid"
+            :oninput="oninput"
             required
             placeholder="ادخل رمز المرور"
           ></b-form-input>
@@ -70,7 +70,10 @@ export default {
       form: {
         password: '',
         name: ''
-      }
+      },
+      title: 'املأ ألحقل رجاءاً',
+      oninvalid: "setCustomValidity('املأ ألحقل رجاءاً')",
+      oninput: "setCustomValidity('')"
     }
   },
   computed: mapState({
@@ -78,6 +81,8 @@ export default {
   }),
   methods: {
     login() {
+      // call to run an action.
+      // when loged in the user will be pushed home in the getToken method.
       this.$store
         .dispatch('tokenModel/getToken', {
           username: this.form.name,
@@ -91,18 +96,12 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.red {
-  color: red;
-}
-.text {
-  text-align: right;
-}
-.bgcolor {
+.bg-color {
   background-color: lightblue;
 }
-.input:focus {
-  outline: none !important;
-  border-color: rgb(219, 24, 24);
-  box-shadow: 0 0 5px red;
-}
+// .input:focus {
+//   outline: none !important;
+//   border-color: rgb(219, 24, 24);
+//   box-shadow: 0 0 5px red;
+// }
 </style>

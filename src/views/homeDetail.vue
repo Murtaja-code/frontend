@@ -2,7 +2,7 @@
   <b-container fluid v-if="soruce">
     <div v-if="name === 'universities'" align="right">
       <h4 class="mt-2">
-        {{ soruce.university_name }}
+        {{ soruce.name }}
       </h4>
 
       <hr />
@@ -12,7 +12,7 @@
           <VueShowdown :markdown="soruce.description" flavor="github" />
 
           <h5 class="mr-2">
-            كليات {{ soruce.university_name }}
+            كليات {{ soruce.name }}
             <small>
               <b-link
                 v-b-toggle.collapse-3
@@ -35,7 +35,7 @@
                       <b-link
                         :to="
                           '/university/collage/' +
-                            soruce.university_name +
+                            soruce.name +
                             '/' +
                             collages[n - 1].name
                         "
@@ -60,13 +60,18 @@
         >
           <h5 class="text-center text-white border pb-2 pt-1 box-top-bgc">
             <font-awesome-icon icon="university" />
-            {{ soruce.university_name }}
+            {{ soruce.name }}
           </h5>
-          <b-img center :src="soruce.logo" alt="kk" height="150"></b-img>
+          <b-img
+            center
+            :src="'http://localhost:8000' + soruce.logo"
+            alt="kk"
+            height="150"
+          ></b-img>
           <Rating
             class="text-center"
             :id="soruce.id"
-            :arb_name="soruce.university_name"
+            :arb_name="soruce.name"
             building="university"
             sub_url="university_ratings?building__id="
           />
@@ -102,23 +107,36 @@
           </b-table-simple>
         </b-col>
       </b-form-row>
-      <h6 class="mt-2">مراجعات {{ soruce.university_name }}</h6>
+      <h6 class="mt-2">مراجعات {{ soruce.name }}</h6>
       <hr class="col-md-3 col-sm-3 col-6" align="right" />
       <Review
         class="col-md-6 mt-2"
-        :university_id="soruce.id"
-        :arb_name="soruce.university_name"
+        :building="soruce.id"
         sub_url="university_reviews"
+        empty1="مراجعات"
+        empty2="المراجعين"
       />
     </div>
 
-    <b-container class="col-md-8" v-if="name === 'news'" align="right">
-      <VueShowdown :markdown="soruce.description" flavor="github" />
-    </b-container>
+    <div v-if="name === 'news'" align="right">
+      <h5 class="text-center mb-3 mt-3">{{ soruce.card_text }}</h5>
+      <b-container fluid="sm">
+        <VueShowdown :markdown="soruce.description" flavor="github"/>
+        <h6 class="mt-2">التعليقات:</h6>
+        <hr class="col-md-3 col-sm-3 col-6" align="right"/>
+        <Review
+          class="col-md-8 mt-4"
+          :building="soruce.id"
+          sub_url="news_reviews"
+          empty1="تعليقات"
+          empty2="المعلقين"
+      /></b-container>
+    </div>
   </b-container>
 </template>
 
 <script>
+// <router-view :key="$route.fullPath" />
 import shared from '../shared'
 import Rating from '../components/rating'
 import Review from '../components/review.vue'
@@ -162,7 +180,7 @@ export default {
           ]
           shared
             .fetchData(
-              `collages?university__university_name=${this.soruce.university_name}&page_size=${this.soruce.collages_num}`
+              `collages?university__name=${this.soruce.name}&page_size=${this.soruce.collages_num}`
             )
             .then((res) => {
               // console.log(res.results[0].name)

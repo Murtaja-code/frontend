@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUniversity } from '@fortawesome/free-solid-svg-icons'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { VueShowdown } from 'vue-showdown'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
@@ -13,7 +14,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 // const plugin 
 // Vue.mixin
-library.add(faUniversity)
+library.add(faUniversity, faSearch)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('VueShowdown', VueShowdown)
 Vue.use(BootstrapVue)
